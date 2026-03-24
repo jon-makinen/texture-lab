@@ -1,65 +1,175 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useRef, useCallback, useEffect } from "react";
+import { TextureCanvas } from "@/components/texture-canvas";
+import { ControlBar } from "@/components/control-bar";
+import { exportCanvasAsPng } from "@/lib/export";
+import {
+  GeneratorState,
+  TextureType,
+  TextureConfig,
+  DEFAULT_COLORS,
+  DEFAULT_CONFIG,
+  PATTERN_SHAPES,
+  LINE_STYLES,
+  TEXTURE_TYPES,
+} from "@/lib/types";
+
+function randomSeed(): number {
+  return Math.floor(Math.random() * 2147483647);
+}
+
+function randomizeConfig(config: TextureConfig, seed: number): TextureConfig {
+  let s = seed;
+  function rng() {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  }
+
+  return {
+    blur: {
+      spread: 0.3 + rng() * 0.7,
+      radius: 0.2 + rng() * 0.8,
+      layers: rng(),
+      softness: 0.3 + rng() * 0.7,
+    },
+    noise: {
+      scale: 0.1 + rng() * 0.9,
+      octaves: rng(),
+      intensity: 0.3 + rng() * 0.7,
+      contrast: rng() * 0.8,
+    },
+    patterns: {
+      shape: PATTERN_SHAPES[Math.floor(rng() * PATTERN_SHAPES.length)],
+      size: 0.1 + rng() * 0.9,
+      spacing: 0.2 + rng() * 0.8,
+      rotation: rng(),
+      strokeWeight: 0.1 + rng() * 0.6,
+    },
+    lines: {
+      style: LINE_STYLES[Math.floor(rng() * LINE_STYLES.length)],
+      angle: rng() * 180,
+      thickness: 0.1 + rng() * 0.7,
+      spacing: 0.2 + rng() * 0.8,
+      secondaryOpacity: rng() * 0.8,
+    },
+    mesh: {
+      softness: 0.3 + rng() * 0.7,
+      distortion: rng() * 0.6,
+      points: 2 + Math.floor(rng() * 6),
+    },
+  };
+}
 
 export default function Home() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [fill, setFill] = useState(true);
+  const [state, setState] = useState<GeneratorState>(() => ({
+    type: "blur",
+    colors: [...DEFAULT_COLORS],
+    config: { ...DEFAULT_CONFIG },
+    seed: 0,
+    opacity: 1,
+    previewBgColor: "#ffffff",
+  }));
+
+  useEffect(() => {
+    const seed = randomSeed();
+    setState((prev) => ({
+      ...prev,
+      seed,
+      config: randomizeConfig(prev.config, seed),
+    }));
+  }, []);
+
+  const handleTypeChange = useCallback((type: TextureType) => {
+    setState((prev) => ({ ...prev, type }));
+  }, []);
+
+  const handleColorsChange = useCallback((colors: string[]) => {
+    setState((prev) => ({ ...prev, colors }));
+  }, []);
+
+  const handleConfigChange = useCallback((config: TextureConfig) => {
+    setState((prev) => ({ ...prev, config }));
+  }, []);
+
+  const handleOpacityChange = useCallback((opacity: number) => {
+    setState((prev) => ({ ...prev, opacity }));
+  }, []);
+
+  const handlePreviewBgChange = useCallback((previewBgColor: string) => {
+    setState((prev) => ({ ...prev, previewBgColor }));
+  }, []);
+
+  const handleSeedChange = useCallback((seed: number) => {
+    setState((prev) => ({ ...prev, seed }));
+  }, []);
+
+  const handleRandomize = useCallback(() => {
+    const newSeed = randomSeed();
+    setState((prev) => ({
+      ...prev,
+      seed: newSeed,
+      config: randomizeConfig(prev.config, newSeed),
+    }));
+  }, []);
+
+  const handleRandomizeWithType = useCallback(() => {
+    const newSeed = randomSeed();
+    const newType = TEXTURE_TYPES[Math.floor(Math.random() * TEXTURE_TYPES.length)];
+    setState((prev) => ({
+      ...prev,
+      seed: newSeed,
+      type: newType,
+      config: randomizeConfig(prev.config, newSeed),
+    }));
+  }, []);
+
+  const handleRandomizeAll = useCallback(() => {
+    const newSeed = randomSeed();
+    const newType = TEXTURE_TYPES[Math.floor(Math.random() * TEXTURE_TYPES.length)];
+    const count = 3 + Math.floor(Math.random() * 3);
+    const colors = Array.from({ length: count }, () =>
+      "#" + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, "0")
+    );
+    setState((prev) => ({
+      ...prev,
+      seed: newSeed,
+      type: newType,
+      colors,
+      config: randomizeConfig(prev.config, newSeed),
+    }));
+  }, []);
+
+  const handleExport = useCallback(() => {
+    if (canvasRef.current) {
+      exportCanvasAsPng(
+        canvasRef.current,
+        state.opacity,
+        `texture-${state.type}-${Date.now()}.png`
+      );
+    }
+  }, [state.type, state.opacity]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="h-full flex flex-col bg-white">
+      <TextureCanvas state={state} canvasRef={canvasRef} fill={fill} />
+      <ControlBar
+        state={state}
+        fill={fill}
+        onFillChange={setFill}
+        onTypeChange={handleTypeChange}
+        onColorsChange={handleColorsChange}
+        onConfigChange={handleConfigChange}
+        onOpacityChange={handleOpacityChange}
+        onPreviewBgChange={handlePreviewBgChange}
+        onSeedChange={handleSeedChange}
+        onRandomize={handleRandomize}
+        onRandomizeWithType={handleRandomizeWithType}
+        onRandomizeAll={handleRandomizeAll}
+        onExport={handleExport}
+      />
     </div>
   );
 }

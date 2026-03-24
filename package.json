@@ -1,7 +1,8 @@
 {
-  "name": "blur",
+  "name": "texture-lab",
   "version": "0.1.0",
   "private": true,
+  "description": "Procedural texture generator for presentations and designs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

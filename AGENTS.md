@@ -1,5 +1,12 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Texture Lab
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+Client-side procedural texture generator built with Next.js 16 (App Router) under `src/`.
+
+## Structure
+
+- `src/app/` — single-page app, no routing
+- `src/components/` — canvas, control bar, color picker, sliders
+- `src/lib/generators/` — blur, noise, patterns, lines, mesh renderers
+- `src/lib/types.ts` — all shared types and defaults
+- `src/lib/export.ts` — PNG export utility
+- `src/lib/extract-colors.ts` — color extraction from dropped images
