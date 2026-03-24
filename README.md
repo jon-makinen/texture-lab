@@ -1,6 +1,8 @@
 # Texture Lab
 
-Generate procedural textured backgrounds for presentations, slides, and designs. Runs entirely in the browser, no server, no account, no upload.
+Generate procedural textured backgrounds for presentations, slides, and designs. Runs entirely in the browser locally.
+
+[demo_video_texture_lab.webm](https://github.com/user-attachments/assets/ad62b9bc-af6a-4687-915b-cdb260b40c52)
 
 ## Features
 
