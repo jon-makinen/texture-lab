@@ -23,6 +23,7 @@ interface ControlBarProps {
   onOpacityChange: (opacity: number) => void;
   onPreviewBgChange: (color: string) => void;
   onSeedChange: (seed: number) => void;
+  onLogoChange: (logo: HTMLImageElement | null) => void;
   onRandomize: () => void;
   onRandomizeWithType: () => void;
   onRandomizeAll: () => void;
@@ -39,6 +40,7 @@ export function ControlBar({
   onOpacityChange,
   onPreviewBgChange,
   onSeedChange,
+  onLogoChange,
   onRandomize,
   onRandomizeWithType,
   onRandomizeAll,
@@ -65,7 +67,9 @@ export function ControlBar({
         return (
           <PatternControls
             config={state.config.patterns}
+            logoImage={state.logoImage}
             onChange={(patterns) => onConfigChange({ ...state.config, patterns })}
+            onLogoChange={onLogoChange}
           />
         );
       case "lines":

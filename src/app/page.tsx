@@ -45,6 +45,7 @@ function randomizeConfig(config: TextureConfig, seed: number): TextureConfig {
       spacing: 0.2 + rng() * 0.8,
       rotation: rng(),
       strokeWeight: 0.1 + rng() * 0.6,
+      offset: rng(),
     },
     lines: {
       style: LINE_STYLES[Math.floor(rng() * LINE_STYLES.length)],
@@ -71,6 +72,7 @@ export default function Home() {
     seed: 0,
     opacity: 1,
     previewBgColor: "#ffffff",
+    logoImage: null,
   }));
 
   useEffect(() => {
@@ -104,6 +106,10 @@ export default function Home() {
 
   const handleSeedChange = useCallback((seed: number) => {
     setState((prev) => ({ ...prev, seed }));
+  }, []);
+
+  const handleLogoChange = useCallback((logoImage: HTMLImageElement | null) => {
+    setState((prev) => ({ ...prev, logoImage }));
   }, []);
 
   const handleRandomize = useCallback(() => {
@@ -165,6 +171,7 @@ export default function Home() {
         onOpacityChange={handleOpacityChange}
         onPreviewBgChange={handlePreviewBgChange}
         onSeedChange={handleSeedChange}
+        onLogoChange={handleLogoChange}
         onRandomize={handleRandomize}
         onRandomizeWithType={handleRandomizeWithType}
         onRandomizeAll={handleRandomizeAll}

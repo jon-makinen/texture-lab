@@ -4,7 +4,8 @@ export function drawPatterns(
   ctx: CanvasRenderingContext2D,
   colors: string[],
   config: PatternConfig,
-  _seed: number
+  _seed: number,
+  logoImage?: HTMLImageElement | null
 ) {
   const w = CANVAS_WIDTH;
   const h = CANVAS_HEIGHT;
@@ -28,9 +29,23 @@ export function drawPatterns(
   const endX = w + padding;
   const endY = h + padding;
 
+  const offset = config.offset ?? 0;
+  const brickAmount = Math.min(offset * 2, 1);
+  const jitterAmount = Math.max((offset - 0.5) * 2, 0);
+
+  let jitterSeed = _seed;
+  function jitterRng() {
+    jitterSeed = (jitterSeed * 1664525 + 1013904223) & 0xffffffff;
+    return ((jitterSeed >>> 0) / 0xffffffff - 0.5) * 2;
+  }
+
   let colorIdx = 0;
+  let rowIdx = 0;
 
   for (let y = startY; y < endY; y += cellSize) {
+    const rowShift = rowIdx % 2 === 1 ? cellSize * 0.5 * brickAmount : 0;
+    rowIdx++;
+
     for (let x = startX; x < endX; x += cellSize) {
       const color = colors[colorIdx % colors.length] || "#a1a1aa";
       colorIdx++;
@@ -41,8 +56,10 @@ export function drawPatterns(
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
-      const cx = x + cellSize / 2;
-      const cy = y + cellSize / 2;
+      const jitterX = jitterAmount * jitterRng() * cellSize * 0.4;
+      const jitterY = jitterAmount * jitterRng() * cellSize * 0.4;
+      const cx = x + cellSize / 2 + rowShift + jitterX;
+      const cy = y + cellSize / 2 + jitterY;
       const s = baseSize / 2;
 
       switch (config.shape) {
@@ -179,6 +196,23 @@ export function drawPatterns(
           ctx.beginPath();
           ctx.arc(cx, cy + s * 0.3, s * 0.8, Math.PI, 0);
           ctx.stroke();
+          break;
+        }
+
+        case "logo": {
+          if (logoImage) {
+            const aspect = logoImage.naturalWidth / logoImage.naturalHeight;
+            let drawW: number, drawH: number;
+            if (aspect > 1) {
+              drawW = baseSize;
+              drawH = baseSize / aspect;
+            } else {
+              drawH = baseSize;
+              drawW = baseSize * aspect;
+            }
+            ctx.globalAlpha = 1;
+            ctx.drawImage(logoImage, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+          }
           break;
         }
       }

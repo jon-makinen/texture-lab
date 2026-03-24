@@ -10,7 +10,8 @@ export function renderTexture(
   type: TextureType,
   colors: string[],
   config: TextureConfig,
-  seed: number
+  seed: number,
+  logoImage?: HTMLImageElement | null
 ) {
   switch (type) {
     case "blur":
@@ -20,7 +21,7 @@ export function renderTexture(
       drawNoise(ctx, colors, config.noise, seed);
       break;
     case "patterns":
-      drawPatterns(ctx, colors, config.patterns, seed);
+      drawPatterns(ctx, colors, config.patterns, seed, logoImage);
       break;
     case "lines":
       drawLines(ctx, colors, config.lines, seed);

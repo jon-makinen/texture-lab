@@ -4,7 +4,7 @@ export type TextureType = (typeof TEXTURE_TYPES)[number];
 export const PATTERN_SHAPES = [
   "dots", "circles", "diamonds", "triangles", "hexagons",
   "stars", "crosses", "chevrons", "waves", "grid",
-  "dashes", "zigzag", "arrows", "scales",
+  "dashes", "zigzag", "arrows", "scales", "logo",
 ] as const;
 export type PatternShape = (typeof PATTERN_SHAPES)[number];
 
@@ -31,6 +31,7 @@ export interface PatternConfig {
   spacing: number;
   rotation: number;
   strokeWeight: number;
+  offset: number;
 }
 
 export interface LineConfig {
@@ -62,6 +63,7 @@ export interface GeneratorState {
   seed: number;
   opacity: number;
   previewBgColor: string;
+  logoImage: HTMLImageElement | null;
 }
 
 export const CANVAS_WIDTH = 1920;
@@ -72,7 +74,7 @@ export const DEFAULT_COLORS = ["#ff6b35", "#1e2761", "#7b2d8e", "#f0c27f"];
 export const DEFAULT_CONFIG: TextureConfig = {
   blur: { spread: 0.6, radius: 0.5, layers: 0.5, softness: 0.7 },
   noise: { scale: 0.4, octaves: 0.5, intensity: 0.6, contrast: 0.5 },
-  patterns: { shape: "dots", size: 0.3, spacing: 0.4, rotation: 0, strokeWeight: 0.3 },
+  patterns: { shape: "dots", size: 0.3, spacing: 0.4, rotation: 0, strokeWeight: 0.3, offset: 0 },
   lines: { style: "parallel", angle: 45, thickness: 0.3, spacing: 0.4, secondaryOpacity: 0 },
   mesh: { softness: 0.6, distortion: 0.3, points: 4 },
 };

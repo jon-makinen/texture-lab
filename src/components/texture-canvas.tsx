@@ -19,7 +19,7 @@ export function TextureCanvas({ state, canvasRef, fill }: TextureCanvasProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    renderTexture(ctx, state.type, state.colors, state.config, state.seed);
+    renderTexture(ctx, state.type, state.colors, state.config, state.seed, state.logoImage);
   }, [state, canvasRef]);
 
   useEffect(() => {
