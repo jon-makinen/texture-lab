@@ -46,6 +46,8 @@ function randomizeConfig(config: TextureConfig, seed: number): TextureConfig {
       rotation: rng(),
       strokeWeight: 0.1 + rng() * 0.6,
       offset: rng(),
+      seamless: rng() > 0.5,
+      clipEdges: rng() > 0.5,
     },
     lines: {
       style: LINE_STYLES[Math.floor(rng() * LINE_STYLES.length)],

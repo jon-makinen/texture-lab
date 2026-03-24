@@ -32,6 +32,8 @@ export interface PatternConfig {
   rotation: number;
   strokeWeight: number;
   offset: number;
+  seamless: boolean;
+  clipEdges: boolean;
 }
 
 export interface LineConfig {
@@ -74,7 +76,7 @@ export const DEFAULT_COLORS = ["#ff6b35", "#1e2761", "#7b2d8e", "#f0c27f"];
 export const DEFAULT_CONFIG: TextureConfig = {
   blur: { spread: 0.6, radius: 0.5, layers: 0.5, softness: 0.7 },
   noise: { scale: 0.4, octaves: 0.5, intensity: 0.6, contrast: 0.5 },
-  patterns: { shape: "dots", size: 0.3, spacing: 0.4, rotation: 0, strokeWeight: 0.3, offset: 0 },
+  patterns: { shape: "dots", size: 0.3, spacing: 0.4, rotation: 0, strokeWeight: 0.3, offset: 0, seamless: false, clipEdges: false },
   lines: { style: "parallel", angle: 45, thickness: 0.3, spacing: 0.4, secondaryOpacity: 0 },
   mesh: { softness: 0.6, distortion: 0.3, points: 4 },
 };

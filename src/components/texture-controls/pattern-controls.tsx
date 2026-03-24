@@ -89,11 +89,35 @@ export function PatternControls({ config, logoImage, onChange, onLogoChange }: P
       <div className="grid grid-cols-2 gap-x-8 gap-y-2">
         <LabeledSlider label="Size" value={config.size} onChange={(v) => update({ size: v })} />
         <LabeledSlider label="Spacing" value={config.spacing} onChange={(v) => update({ spacing: v })} />
-        <LabeledSlider label="Rotation" value={config.rotation} onChange={(v) => update({ rotation: v })} />
+        {!config.seamless && (
+          <LabeledSlider label="Rotation" value={config.rotation} onChange={(v) => update({ rotation: v })} />
+        )}
         <LabeledSlider label="Offset" value={config.offset} onChange={(v) => update({ offset: v })} />
         {config.shape !== "logo" && (
           <LabeledSlider label="Weight" value={config.strokeWeight} onChange={(v) => update({ strokeWeight: v })} />
         )}
+        <div className="flex items-center gap-3 col-span-2">
+          <button
+            onClick={() => update({ seamless: !config.seamless })}
+            className={`px-3 py-1 rounded text-[11px] font-mono uppercase tracking-wider transition-colors border ${
+              config.seamless
+                ? "bg-accent-ui/10 border-accent-ui-dim text-ink"
+                : "border-edge text-ink-muted hover:text-ink hover:border-edge-strong"
+            }`}
+          >
+            Seamless
+          </button>
+          <button
+            onClick={() => update({ clipEdges: !config.clipEdges })}
+            className={`px-3 py-1 rounded text-[11px] font-mono uppercase tracking-wider transition-colors border ${
+              config.clipEdges
+                ? "bg-accent-ui/10 border-accent-ui-dim text-ink"
+                : "border-edge text-ink-muted hover:text-ink hover:border-edge-strong"
+            }`}
+          >
+            Clip Edges
+          </button>
+        </div>
       </div>
     </div>
   );
